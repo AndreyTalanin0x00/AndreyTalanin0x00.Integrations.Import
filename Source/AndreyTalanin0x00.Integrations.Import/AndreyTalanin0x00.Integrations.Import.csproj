@@ -1,0 +1,25 @@
+<Project>
+
+  <Sdk Name="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>Andrey Talanin</Authors>
+    <Description>A set of abstractions to add generic import pipeline capabilities to a .NET application.</Description>
+    <RepositoryUrl>https://github.com/AndreyTalanin0x00/AndreyTalanin0x00.Integrations.Import.git</RepositoryUrl>
+    <Version>0.1.0-dev0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AndreyTalanin0x00.Extensions.DependencyInjection.Abstractions" Version="0.1.0-rc1" />
+    <PackageReference Include="AndreyTalanin0x00.Integrations.Blobs" Version="0.1.0-rc1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+
+</Project>
