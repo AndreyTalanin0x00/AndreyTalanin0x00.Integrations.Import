@@ -32,6 +32,7 @@ internal class ImportPipelineOptionsBuilder<TImportRequest, TImportResponse, TIm
     {
         m_importPipelineOptions = importPipelineOptions;
 
+        UseImportNormalizer<PassThroughImportNormalizer<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>>();
         UseImportValidator<PassThroughImportValidator<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>>();
     }
 
@@ -55,6 +56,30 @@ internal class ImportPipelineOptionsBuilder<TImportRequest, TImportResponse, TIm
 
         void AddImportReader(IServiceCollection services) =>
             services.AddTransient<IImportReader<TImportRequest, TImportResponse>, TImportReader>(serviceProvider => importReaderImplementationFactory(serviceProvider));
+
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IImportPipelineOptionsBuilder<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> UseImportNormalizer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImportNormalizer>()
+        where TImportNormalizer : class, IImportNormalizer<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>
+    {
+        m_importPipelineOptions.AddImportNormalizerServiceCollectionVisitor = AddImportNormalizer;
+
+        static void AddImportNormalizer(IServiceCollection services) =>
+            services.AddTransient<IImportNormalizer<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>, TImportNormalizer>();
+
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IImportPipelineOptionsBuilder<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> UseImportNormalizer<TImportNormalizer>(ServiceImplementationFactory<TImportNormalizer> importNormalizerImplementationFactory)
+        where TImportNormalizer : class, IImportNormalizer<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>
+    {
+        m_importPipelineOptions.AddImportNormalizerServiceCollectionVisitor = AddImportNormalizer;
+
+        void AddImportNormalizer(IServiceCollection services) =>
+            services.AddTransient<IImportNormalizer<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>, TImportNormalizer>(serviceProvider => importNormalizerImplementationFactory(serviceProvider));
 
         return this;
     }
@@ -172,6 +197,8 @@ internal class ImportPipelineOptionsBuilder<TImportRequest, TImportResponse, TIm
     {
         if (m_importPipelineOptions.AddImportReaderServiceCollectionVisitor is null)
             throw new InvalidOperationException("The import pipeline's configuration is invalid: no import reader is specified.");
+        if (m_importPipelineOptions.AddImportNormalizerServiceCollectionVisitor is null)
+            throw new InvalidOperationException("The import pipeline's configuration is invalid: no import normalizer is specified.");
         if (m_importPipelineOptions.AddImportValidatorServiceCollectionVisitor is null)
             throw new InvalidOperationException("The import pipeline's configuration is invalid: no import validator is specified.");
         if (m_importPipelineOptions.AddImportProcessorServiceCollectionVisitor is null)
