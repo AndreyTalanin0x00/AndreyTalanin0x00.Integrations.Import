@@ -28,6 +28,7 @@ public class ImportPipeline<TImportRequest, TImportResponse, TImportIntermediate
     private readonly IImportPipelineChannelKeyResolver<TImportRequest, TImportResponse> m_importPipelineChannelKeyResolver;
     private readonly List<IImportPipelineChannel<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>> m_importPipelineChannels;
     private readonly Dictionary<ImportPipelineChannelKey, IImportPipelineChannel<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>> m_importPipelineChannelsDictionary;
+    private readonly IImportNormalizer<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> m_importNormalizer;
     private readonly IImportValidator<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> m_importValidator;
     private readonly IImportProcessor<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> m_importProcessor;
 
@@ -36,12 +37,14 @@ public class ImportPipeline<TImportRequest, TImportResponse, TImportIntermediate
         IImportPipelineChannelKeyResolver<TImportRequest, TImportResponse> importPipelineChannelKeyResolver,
         IEnumerable<IImportPipelineChannel<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>> importPipelineChannels,
         IImportValidator<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> importValidator,
+        IImportNormalizer<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> importNormalizer,
         IImportProcessor<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> importProcessor)
     {
         m_importReader = importReader;
         m_importPipelineChannelKeyResolver = importPipelineChannelKeyResolver;
         m_importPipelineChannels = [.. importPipelineChannels];
         m_importPipelineChannelsDictionary = importPipelineChannels.ToDictionary(importPipelineChannel => importPipelineChannel.Key);
+        m_importNormalizer = importNormalizer;
         m_importValidator = importValidator;
         m_importProcessor = importProcessor;
     }
@@ -51,6 +54,8 @@ public class ImportPipeline<TImportRequest, TImportResponse, TImportIntermediate
     protected IImportPipelineChannelKeyResolver<TImportRequest, TImportResponse> ImportPipelineChannelKeyResolver => m_importPipelineChannelKeyResolver;
 
     protected IEnumerable<IImportPipelineChannel<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>> ImportPipelineChannels => m_importPipelineChannels;
+
+    protected IImportNormalizer<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> ImportNormalizer => m_importNormalizer;
 
     protected IImportValidator<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> ImportValidator => m_importValidator;
 
@@ -64,6 +69,8 @@ public class ImportPipeline<TImportRequest, TImportResponse, TImportIntermediate
 
         ImportObjectPackageBatch<TImportIntermediateObjectPackage, TImportObjectPackage>[] importObjectPackageBatches =
             await DeserializeAsync(importRequest, importSourceBatches, cancellationToken);
+
+        await NormalizeAsync(importObjectPackageBatches, cancellationToken);
 
         await ValidateAsync(importObjectPackageBatches, cancellationToken);
 
@@ -109,6 +116,11 @@ public class ImportPipeline<TImportRequest, TImportResponse, TImportIntermediate
         }
 
         return importObjectPackageBatches;
+    }
+
+    protected virtual async Task NormalizeAsync(ImportObjectPackageBatch<TImportIntermediateObjectPackage, TImportObjectPackage>[] importObjectPackageBatches, CancellationToken cancellationToken = default)
+    {
+        await m_importNormalizer.NormalizeAsync(importObjectPackageBatches, cancellationToken);
     }
 
     protected virtual async Task ValidateAsync(ImportObjectPackageBatch<TImportIntermediateObjectPackage, TImportObjectPackage>[] importObjectPackageBatches, CancellationToken cancellationToken = default)
