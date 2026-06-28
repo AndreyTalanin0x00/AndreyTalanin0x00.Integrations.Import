@@ -150,6 +150,8 @@ public static class ServiceCollectionExtensions
             nameof(ImportPipelineOptions<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>.AddImportReaderServiceCollectionVisitor);
         const string addImportProcessorServiceCollectionVisitorPropertyName =
             nameof(ImportPipelineOptions<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>.AddImportProcessorServiceCollectionVisitor);
+        const string addImportNormalizerServiceCollectionVisitorPropertyName =
+            nameof(ImportPipelineOptions<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>.AddImportNormalizerServiceCollectionVisitor);
         const string addImportValidatorServiceCollectionVisitorPropertyName =
             nameof(ImportPipelineOptions<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>.AddImportValidatorServiceCollectionVisitor);
         const string addImportPipelineChannelKeyResolverServiceCollectionVisitorPropertyName =
@@ -164,6 +166,8 @@ public static class ServiceCollectionExtensions
             ?? throw new UnreachableException($"An {importPipelineOptionsClassName} instance has its {addImportReaderServiceCollectionVisitorPropertyName} property set to null after the {buildMethodName} method has been called.");
         Action<IServiceCollection> addImportProcessorServiceCollectionVisitor = importPipelineOptions.AddImportProcessorServiceCollectionVisitor
             ?? throw new UnreachableException($"An {importPipelineOptionsClassName} instance has its {addImportProcessorServiceCollectionVisitorPropertyName} property set to null after the {buildMethodName} method has been called.");
+        Action<IServiceCollection> addImportNormalizerServiceCollectionVisitor = importPipelineOptions.AddImportNormalizerServiceCollectionVisitor
+            ?? throw new UnreachableException($"An {importPipelineOptionsClassName} instance has its {addImportNormalizerServiceCollectionVisitorPropertyName} property set to null after the {buildMethodName} method has been called.");
         Action<IServiceCollection> addImportValidatorServiceCollectionVisitor = importPipelineOptions.AddImportValidatorServiceCollectionVisitor
             ?? throw new UnreachableException($"An {importPipelineOptionsClassName} instance has its {addImportValidatorServiceCollectionVisitorPropertyName} property set to null after the {buildMethodName} method has been called.");
         Action<IServiceCollection> addImportPipelineChannelKeyResolverServiceCollectionVisitor = importPipelineOptions.AddImportPipelineChannelKeyResolverServiceCollectionVisitor
@@ -174,6 +178,7 @@ public static class ServiceCollectionExtensions
 
         addImportReaderServiceCollectionVisitor(services);
         addImportProcessorServiceCollectionVisitor(services);
+        addImportNormalizerServiceCollectionVisitor(services);
         addImportValidatorServiceCollectionVisitor(services);
         addImportPipelineChannelKeyResolverServiceCollectionVisitor(services);
 
