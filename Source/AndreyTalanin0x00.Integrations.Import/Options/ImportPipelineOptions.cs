@@ -20,6 +20,8 @@ internal class ImportPipelineOptions<TImportRequest, TImportResponse, TImportInt
 
     public Action<IServiceCollection>? AddImportProcessorServiceCollectionVisitor { get; set; }
 
+    public Action<IServiceCollection>? AddImportNormalizerServiceCollectionVisitor { get; set; }
+
     public Action<IServiceCollection>? AddImportValidatorServiceCollectionVisitor { get; set; }
 
     public Action<IServiceCollection>? AddImportPipelineChannelKeyResolverServiceCollectionVisitor { get; set; }
