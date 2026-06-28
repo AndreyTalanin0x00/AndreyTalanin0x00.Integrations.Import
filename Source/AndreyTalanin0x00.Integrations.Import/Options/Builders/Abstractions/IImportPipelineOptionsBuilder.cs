@@ -20,6 +20,12 @@ public interface IImportPipelineOptionsBuilder<TImportRequest, TImportResponse, 
     public IImportPipelineOptionsBuilder<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> UseImportReader<TImportReader>(ServiceImplementationFactory<TImportReader> importReaderImplementationFactory)
         where TImportReader : class, IImportReader<TImportRequest, TImportResponse>;
 
+    public IImportPipelineOptionsBuilder<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> UseImportNormalizer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImportNormalizer>()
+        where TImportNormalizer : class, IImportNormalizer<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>;
+
+    public IImportPipelineOptionsBuilder<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> UseImportNormalizer<TImportNormalizer>(ServiceImplementationFactory<TImportNormalizer> importNormalizerImplementationFactory)
+        where TImportNormalizer : class, IImportNormalizer<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>;
+
     public IImportPipelineOptionsBuilder<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage> UseImportValidator<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImportValidator>()
         where TImportValidator : class, IImportValidator<TImportRequest, TImportResponse, TImportIntermediateObjectPackage, TImportObjectPackage>;
 
